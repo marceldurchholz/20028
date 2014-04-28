@@ -193,7 +193,7 @@ define(["jquery", "backbone", "text!templates/captureVideoLinkPage.html", "model
 					$( "#"+popupid ).bind({
 						popupafterclose: function(event, ui) { 
 							var videoLink = $('#linkVideoUrl').val();
-							var videoLink = "http://download.wavetlan.com/SVV/Media/HTTP/H264/Talkinghead_Media/H264_test1_Talkinghead_mp4_480x360.mp4";
+							// var videoLink = "http://download.wavetlan.com/SVV/Media/HTTP/H264/Talkinghead_Media/H264_test1_Talkinghead_mp4_480x360.mp4";
 							if (videoLink!='') {
 								var video_player = $('#video_player');
 								video_player.attr("src", videoLink).get(0).pause();
