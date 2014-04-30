@@ -1,63 +1,15 @@
 // VideoDetailsView.js
 // -------
-define(["jquery", "backbone", "collections/videosCollection", "text!templates/videoDetailsView.html", "text!templates/sidemenusList.html", "views/SidemenuView", "text!templates/usergroupsPopupPage.html"],
+define(["jquery", "backbone", "collections/videosCollection", "text!templates/videoDetailsView.html", "text!templates/sidemenusList.html", "views/SidemenuView", "text!templates/usergroupsPopupPage.html", "text!templates/pricePopupPage.html"],
 
-    function($, Backbone, videosCollection, videosDetailsViewHTML, sidemenusList, SidemenuView, usergroupsPopupPage){
+    function($, Backbone, videosCollection, videosDetailsViewHTML, sidemenusList, SidemenuView, usergroupsPopupPage, pricePopupPage){
 		
 			var VideoDetailsViewVar = Backbone.View.extend({
 			
 				el: "#page-content",
 				attributes: {"data-role": 'content'},
-				/*
-				createVideo: function () {
-					if (this._videosCollection.online==0) {
-						// this._videosCollection._localStorage_users.create(new Video({"fullname": "offline James King", "device": "5645-6543-5415-5233", "credits": "120", "pictureurl": "http://www.redner24.de/typo3temp/GB/Durchholz_Marcel_4c_1090c3626b_Durc_a4ff6064ff.jpg"}));
-						alert('in offline mode you can not add data');
-					}
-					else {
-						// this._videosCollection._localStorage_users.create(new VideoModel({"fullname": "offline James King", "device": "5645-6543-5415-5233", "credits": "120", "pictureurl": "http://www.redner24.de/typo3temp/GB/Durchholz_Marcel_4c_1090c3626b_Durc_a4ff6064ff.jpg"}));
-						this.create(new VideoModel({"uploader": "042cb1572ffbea5d", "videourl": "http://xyz.de.com.uk", "title": "This is a video title", "description": "This is a description", "price": "35", "thumbnailurl": ""}));
-					}
-					return(false);
-				},
-				create: function(model) {
-					_thisViewVideoDetails = this;
-					$.ajax('http://dominik-lohmann.de:5000/videos', {
-					  type: "POST",
-					  contentType: "application/json",
-					  data: JSON.stringify(model.attributes),
-					  success: function(todo) {
-						_thisViewVideoDetails.fetch();
-					  }, 
-					  error: function(xhr,b) {
-						console.log(xhr);
-						alert(xhr);
-					  }
-					});
-					return(false);
-				},
-				*/
 				bindEvents: function() {
 					_thisViewVideoDetails = this;
-					/*
-					this.$el.off('click','#connectToLink').on('click','#connectToLink',function(e) { 
-						e.preventDefault();
-						// var videoid = $(this).attr('data-videoid');
-						// _thisViewVideoDetails.buyVideo(videoid); 
-						alert($(this).attr('data-id'));
-						var connectionid = $(this).attr('data-id');
-						showModal();
-						dpd.users.put(connectionid, 
-							{"followers": {$push:$.trim(window.me.id)}}, function(result, err) {
-							if(err) {
-								return console.log(err);
-								hideModal();
-							}
-							// console.log(result, result.id);
-							hideModal();
-						});
-					});
-					*/
 					this.$el.off('click','#showOptionsBtn').on('click','#showOptionsBtn',function(e) { 
 						e.preventDefault();
 						$('#toggleDiv').fadeIn();
@@ -69,21 +21,14 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					});
 					this.$el.off('click','#sendMessageBtn').on('click','#sendMessageBtn',function(e) { 
 						e.preventDefault();
-						// var exists = $.inArray( $.trim(window.me.id), _thisViewVideoDetails.uploaderdata.followers );
-						// if (exists>-1) {
-							// alert('you are a follower of him...')
-							window.location.href = "#messages/details/view/"+_thisViewVideoDetails.uploaderdata.id;
-						// }
+						window.location.href = "#messages/details/view/"+_thisViewVideoDetails.uploaderdata.id;
 					});
 					
 					this.$el.off('click','#loadvideobutton').on('click','#loadvideobutton',function(e) { 
 						var videoid = $(this).attr('data-videoid');
-						
-						// dpd.users.me(function(me) {
 						dpd('users').get(window.system.uid, function(me, err) {
 							if (me) {
 								_thisViewVideoDetails.buyVideo(videoid);
-								// alert(videoid);
 							}
 							else {
 								doConfirm('Um diese Funktion zu nutzen, registrieren Sie sich bitte.', 'Video kaufen', function (event) { 
@@ -92,9 +37,9 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 									}
 								}, ('Okay,Abbruch').split(","));
 							}
-						});
-						
+						});						
 					});
+					
 					this.$el.off('click','#complainvideolink').on('click','#complainvideolink',function(e) { 
 						e.preventDefault();
 						var videoid = $(this).attr('data-videoid');
@@ -112,8 +57,6 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					});
 					this.$el.off('click','#detailsvideolink').on('click','#detailsvideolink',function(e) { 
 						e.preventDefault();
-						// var videoid = $(this).attr('data-videoid');
-						// window.location.href = "mailto:support@appinaut.de?subject=Meldung%20eines%20Videos%20oder%20eines%20Verstosses%20-%20"+videoid+"&body=Bitte%20teilen%20Sie%20uns%20den%20Hintergrund%20Ihrer%20Meldung%20oder%20des%20Verstosses%20detailliert%20mit.";
 						$('#videodetailsdiv').toggle();
 						$('#detailsvideolink').toggle();
 					});
@@ -146,19 +89,19 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 							streamdata.dbtype = 'video';
 							streamdata.objid = video.id;
 							streamdata.activeusergroups = video.usergroups;
+							if (video.usergroups==undefined) video.usergroups=new Array();
 							_thisViewVideoDetails._videosCollection.models[0].attributes.usergroups = streamdata.activeusergroups;
+							if (video.active==undefined) video.active=false;
 							streamdata.objactive = video.active;
 							_thisViewVideoDetails._videosCollection.models[0].attributes.active = streamdata.objactive;
+							if (video.public==undefined) video.public=false;
 							streamdata.objpublic = video.public;
 							_thisViewVideoDetails._videosCollection.models[0].attributes.public = streamdata.objpublic;
 						});
-
 						var popupid = 'popupBasic';
-						$('#pageoverlay').append('<div style="z-index:9999;width:'+($(window).width()-30)+'px;min-width:200px !important;max-width:650px !important;" data-role="popup" data-dismissible="true" data-overlay-theme="a" class="ui-corner-all" data-theme="a" id="'+popupid+'"></div>');
+						$('#pageoverlay').append('<div style="z-index:9999;b/ackground-color:#000;width:'+($(window).width()-60)+'px;min-width:200px !important;max-width:650px !important;" data-role="popup" data-dismissible="true" data-overlay-theme="a" class="ui-corner-all" data-theme="a" id="'+popupid+'"></div>');
 						$('#'+popupid).html('<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right"></a>');			
-						$('#'+popupid).append('<div class="ui-corner-bottom ui-content" style="z-index:9999;" id="popupcontent" data-role="content"></div>');
-						// alert('bla>'+dateYmdHis());
-						// console.log($('#'+popupid).html());
+						$('#'+popupid).append('<div class="ui-corner-bottom ui-content" style="z-index:9999;b/ackground-color:#000;" id="popupcontent" data-role="content"></div>');
 						$( "#"+popupid ).bind({
 							popupafterclose: function(event, ui) { 
 								$('#body').find('.ui-popup-container').each(function() {
@@ -167,12 +110,14 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 								$('#pageoverlay').find('#popupBasic').each(function() {
 									$(this).remove();
 								});
+								$('#videoboxinnerdiv').css({"visibility":"visible"});
 							}
 						});
 						var popupcontent = _.template(usergroupsPopupPage, {
 							data: streamdata
 						},{variable:'streamdata'});
 						$('#popupcontent').html(popupcontent);
+						$('#videoboxinnerdiv').css({"visibility":"hidden"});
 						var el = $( "#"+popupid );
 						el.popup().trigger('create');
 						el.popup( "open", {transition: 'fade'} );
@@ -180,19 +125,71 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					
 					$('#body').off('change','.usergroupcb').on('change','.usergroupcb',function(e) { 
 						e.preventDefault();
-						var videoid = $(this).attr('data-videoid');
+						var id = $(this).attr('data-id');
 						// alert(_thisViewVideoDetails._videosCollection.models[0].attributes.id);
 						// return(false);
 						var usergroupid = $(this).attr('data-usergroupid');
 						if (e.currentTarget.checked==false) status = "";
 						else status = "checked";
 						// return(false);
-						dpd('videos').get(videoid, function(video, err) {
+						dpd('videos').get(id, function(video, err) {
 							var exists = $.inArray( $.trim(usergroupid), video.usergroups )
-							if (status=="checked" && exists==-1) dpd.videos.put(videoid, {"usergroups": {$push:$.trim(usergroupid)}} );
-							else dpd.videos.put(videoid, {"usergroups": {$pull:$.trim(usergroupid)}} );
+							if (status=="checked" && exists==-1) dpd.videos.put(id, {"usergroups": {$push:$.trim(usergroupid)}} );
+							else dpd.videos.put(id, {"usergroups": {$pull:$.trim(usergroupid)}} );
 						});
 						return(false);
+					});
+					
+					_thisViewVideoDetails.$el.off('click','#changePriceBtn').on('click','#changePriceBtn',function(e){
+						e.preventDefault();
+						var streamdata = new Object();
+						var id = $(this).attr('data-id');
+						_thisViewVideoDetails._videosCollection.models[0].attributes.id = id;
+						streamdata.id = _thisViewVideoDetails._videosCollection.models[0].attributes.id;
+						
+						$.ajax({
+							url: "http://dominik-lohmann.de:5000/videos/"+id,
+							async: false
+						}).done(function(video) {
+							streamdata.dbtype = 'video';
+							streamdata.objid = video.id;
+							streamdata.activeusergroups = video.usergroups;
+							_thisViewVideoDetails._videosCollection.models[0].attributes.usergroups = streamdata.activeusergroups;
+							streamdata.objactive = video.active;
+							_thisViewVideoDetails._videosCollection.models[0].attributes.active = streamdata.objactive;
+							streamdata.objpublic = video.public;
+							_thisViewVideoDetails._videosCollection.models[0].attributes.public = streamdata.objpublic;
+							streamdata.slider_price = video.price;
+							_thisViewVideoDetails._videosCollection.models[0].attributes.price = streamdata.slider_price;		
+							console.log(streamdata);
+						});
+						var popupid = 'popupBasic';
+						$('#pageoverlay').append('<div style="z-index:9999;b/ackground-color:#000;width:'+($(window).width()-60)+'px;min-width:200px !important;max-width:650px !important;" data-role="popup" data-dismissible="true" data-overlay-theme="a" class="ui-corner-all" data-theme="a" id="'+popupid+'"></div>');
+						$('#'+popupid).html('<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right"></a>');			
+						$('#'+popupid).append('<div class="ui-corner-bottom ui-content" style="z-index:9999;b/ackground-color:#000;" id="popupcontent" data-role="content"></div>');
+						$( "#"+popupid ).bind({
+							popupafterclose: function(event, ui) { 
+								$('#body').find('.ui-popup-container').each(function() {
+									$(this).remove();
+								});
+								$('#pageoverlay').find('#popupBasic').each(function() {
+									$(this).remove();
+								});
+								$('#videoboxinnerdiv').css({"visibility":"visible"});
+								_thisViewVideoDetails.fetch(_thisViewVideoDetails.options);
+							}
+						});
+						var popupcontent = _.template(pricePopupPage, {
+							data: streamdata
+						},{variable:'streamdata'});
+						$('#popupcontent').html(popupcontent);
+						$('#videoboxinnerdiv').css({"visibility":"hidden"});
+						var el = $( "#"+popupid );
+						el.popup().trigger('create');
+						$("#sliderprice").val(streamdata.slider_price).slider("refresh");
+						$("#sliderprice").focus();
+						$("#sliderprice").blur();
+						el.popup( "open", {transition: 'fade'} );
 					});
 
 				},
@@ -522,7 +519,7 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 						price: model.get('price'),
 						seeker: seeker,
 						provider: provider,
-						cdate: dateYmdHisToGerman(model.get('cdate')),
+						cdate: model.get('cdate'),
 						vlength: model.get('vlength'),
 						vsize: model.get('vsize'),
 						purchases: this._videosCollection.user.purchases,
@@ -536,9 +533,6 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 				render: function() {
 					_thisViewVideoDetails = this;
 					// console.log('rendering');
-					$(window).resize(function() {
-						window.resizeElement('#video_player_1')
-					});
 					// console.log('DOING render VideoDetailsView.js called');
 					$('#sidebarListViewDiv').html(_.template(sidemenusList, {}));
 					_thisViewVideoDetails.nestedView = new SidemenuView().fetch();
@@ -552,7 +546,7 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					});
 					
 					// video.uploaderdata.id
-					console.log(this._videosCollection);
+					// console.log(this._videosCollection);
 					if ( 
 						($.inArray( this._videosCollection.models[0].attributes.id , window.me.purchases ) >- 1) 
 						|| (Math.round(this._videosCollection.models[0].attributes.price)==0) 
@@ -588,12 +582,42 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					// console.log(window.me.purchases);
 					// console.log(this._videosCollection.models[0].attributes.id);
 					// alert($.inArray( this._videosCollection.models[0].attributes.id , window.me.purchases ));
-					if (this._videosCollection.models[0].attributes.offlineurl!='') this._videosCollection.models[0].attributes.videourl = this._videosCollection.models[0].attributes.offlineurl;
-					window.createVideoPreview(_thisViewVideoDetails.$('#video_player_1'),'video_player_1',this._videosCollection.models[0].attributes.videourl,this._videosCollection.models[0].attributes.showVideoLength);
-					$('video_player_1_html5_api').css("z-index","2147483647");
-					// alert(_thisViewVideoDetails.videourl);
-					// alert(this._videosCollection.models[0].attributes.videourl);
-					hideModal();
+					
+					// var isyoutube = false;
+					var youtubeid = "";
+					
+					// var youtubeurl = "http://www.youtube-nocookie.com/embed/FTcmgUKjOEc?modestbranding=1&showsearch=0&showinfo=0&theme=light&iv_load_policy=3&enablejsapi=1&loop=0&autoplay=0&controls=0&rel=0";
+					// var youtubeurl = "http://www.youtube.com/watch?v=FTcmgUKjOEc";
+					// this._videosCollection.models[0].attributes.videourl = youtubeurl;
+					
+					var youtubeEmbedObject = new Object();
+					
+					// youtubeEmbedObject = checkYoutubeUrl(this._videosCollection.models[0].attributes.videourl);
+					// console.log(youtubeEmbedObject);
+					var ytcheck = new Object();
+					ytcheck = checkYoutubeUrl(this._videosCollection.models[0].attributes.videourl);
+					// console.log(ytcheck);
+					// var isyoutube = this._videosCollection.models[0].attributes.videourl).isyoutube;
+					if (ytcheck.isyoutube == true) {
+						// alert('isyoutubeurl');
+						$('#videobox').hide();
+						$('#youtubebox').show();
+						this._videosCollection.models[0].attributes.videourl = "http://www.youtube.com/embed/"+ytcheck.youtubeid+"?modestbranding=1&showsearch=0&showinfo=0&theme=light&iv_load_policy=3&enablejsapi=1&loop=0&autoplay=0&controls=0&rel=0";
+						$('#youtube_player_1').attr("src", this._videosCollection.models[0].attributes.videourl);
+						// isyoutube = true;
+						// console.log(youtubeEmbedObject.v);
+						// youtubeid = ytcheck.youtubeid;					
+					}
+					else {
+						$('#videobox').show();
+						$('#youtubebox').hide();
+						if (this._videosCollection.models[0].attributes.offlineurl!='') this._videosCollection.models[0].attributes.videourl = this._videosCollection.models[0].attributes.offlineurl;
+						window.createVideoPreview(_thisViewVideoDetails.$('#video_player_1'),'video_player_1',this._videosCollection.models[0].attributes.videourl,this._videosCollection.models[0].attributes.showVideoLength);
+						$('video_player_1_html5_api').css("z-index","2147483647");
+						// alert(_thisViewVideoDetails.videourl);
+						// alert(this._videosCollection.models[0].attributes.videourl);
+					}
+					
 					this.$el.trigger('create');
 					new FastClick(document.body);
 					
@@ -605,11 +629,18 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 					_thisViewVideoDetails.fullname_shorten = _thisViewVideoDetails.uploaderdata.fullname;
 					if (_thisViewVideoDetails.fullname_shorten.length>slicePoint) _thisViewVideoDetails.fullname_shorten = _thisViewVideoDetails.fullname_shorten.substr(0,slicePoint*2)+'...';
 					
-					this.$el.fadeIn( 500, function() {
-						$('.ui-content').scrollTop(0);
-						new FastClick(document.body);
-						fontResize();
-						// alert($('.readmore').html());
+					window.resizeWideScreen('#video_player_1');
+					window.resizeWideScreen('#youtube_player_1');
+					window.resizeWideScreen('#youtubebox');
+					window.resizeWideScreen('#videobox');
+					$(window).resize(function() {
+						window.resizeWideScreen('#video_player_1');
+						window.resizeWideScreen('#youtube_player_1');
+						window.resizeWideScreen('#youtubebox');
+						window.resizeWideScreen('#videobox');
+					});
+
+					fontResize();
 						$('.readmoretitle').expander({
 							slicePoint: 0,
 							preserveWords: false,
@@ -646,6 +677,11 @@ define(["jquery", "backbone", "collections/videosCollection", "text!templates/vi
 							userCollapseText: '',
 							userCollapse: false
 						});
+					hideModal();
+					this.$el.fadeIn( 500, function() {
+						$('.ui-content').scrollTop(0);
+						// alert($('.readmore').html());
+						new FastClick(document.body);
 					});
 					_thisViewVideoDetails.bindEvents();
 					return this;
