@@ -3,17 +3,17 @@
 <!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "com.digitalverve.20028"
-        version   = "1.0.1">
+        id        = "com.digitalverve.APPinaut"
+        version   = "1.1.0">
 
-    <name>20028</name>
+    <name>APPinaut - Mobile Training and Infotainment</name>
 
     <description>
-        Dies ist eine Mobile Learning App. Wissensdurstigen Nutzern werden Wissensinhalte im Multimediaformat und über Lernsets/Lernkarten angeboten.
+        Mit dem APPinaut, einer Mobile Learning App, wird Wissensmaterial multimedial und in Form von Übungsaufgaben zu unterschiedlichsten Bildungsthemen bereitgestellt. Der Zugang zum APPinaut und seiner stetig wachsenden mobilen Mediathek, bestehend aus Lernsets und Videos, ist kostenlos. Die Inhalte können von den wissensdurstige Nutzern teilweise kostenpflichtig aber auch kostenlos geladen werden. Das Tablet und das Smartphone eignen sich ideal für das mobile Lernen zwischendurch. Laden Sie den APPinaut und bilden Sie sich weiter - wann und wo Sie wollen.
     </description>
 
     <author href="http://www.digitalverve.de" email="info@digitalverve.de">
-        DigitalVerve - Marcel Durchholz
+        DigitalVerve - Digital Solutions
     </author>
 
     <!--
@@ -62,12 +62,12 @@
 	
 	<!--- DOCS: https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin#4-url-scheme-hints -->
 	<gap:plugin name="nl.x-services.plugins.launchmyapp">
-	  <param name="URL_SCHEME" value="20028" />
+	  <param name="URL_SCHEME" value="appinaut" />
 	</gap:plugin>
 	<!--
 	<gap:plugin name="com.phonegap.plugins.facebookconnect">
 		<param name="APP_ID" value="608776825852280" />
-		<param name="APP_NAME" value="20028mobilelogin" />
+		<param name="APP_NAME" value="appinautmobilelogin" />
 	</gap:plugin>
 	-->
 	<!--
@@ -102,14 +102,15 @@
 	<!-- <gap:plugin name="org.apache.cordova.vibration" /> -->
 	<gap:plugin name="cc.fovea.plugins.inapppurchase" />
 	<gap:plugin name="nl.x-services.plugins.insomnia" />
-	<gap:plugin name="com.phonegap.plugins.childbrowser" />
+	
+	<gap:plugin name="org.apache.cordova.core.inappbrowser" />
 	
 	<!--
+	<gap:plugin name="com.phonegap.plugins.childbrowser" />
 	<gap:plugin name="org.apache.cordova.core.device-motion" />
 	<gap:plugin name="org.apache.cordova.core.contacts" /> 
 	<gap:plugin name="org.apache.cordova.core.geolocation" />
 	<gap:plugin name="org.apache.cordova.core.globalization" />
-	<gap:plugin name="org.apache.cordova.core.inappbrowser" />
 	<gap:plugin name="org.apache.cordova.core.battery-status" />
     <!-- 3rd party plugins -->	
 	<!--
@@ -182,11 +183,11 @@
     <icon src="res/icon/ios/icon-57.png"            gap:platform="ios"        width="57" height="57" />
     <icon src="res/icon/ios/icon-72.png"            gap:platform="ios"        width="72" height="72" />
     <icon src="res/icon/ios/icon-57-2x.png"         gap:platform="ios"        width="114" height="114" />
-    <icon src="res/icon/ios/icon-72-2x.png"         gap:platform="ios"        width="144" height="144" />
+    <icon src="res/icon/ios/icon-72-2x.png"         gap:platform="ios"        width="144" height="144" />	
     <icon src="res/icon/ios/icon-152.png"         gap:platform="ios"        width="152" height="152" />
     <icon src="res/icon/ios/icon-120.png"         gap:platform="ios"        width="120" height="120" />
     <icon src="res/icon/ios/icon-76.png"         gap:platform="ios"        width="76" height="76" />
-	
+
     <icon src="res/icon/windows-phone/icon-48.png"  gap:platform="winphone" />
     <icon src="res/icon/windows-phone/icon-173.png" gap:platform="winphone"   gap:role="background" />
 
